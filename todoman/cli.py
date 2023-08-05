@@ -361,7 +361,7 @@ with contextlib.suppress(ImportError):
 @_interactive_option
 @pass_ctx
 @catch_errors
-def new(ctx, summary, list, todo_properties, read_description, interactive):
+def nw(ctx, summary, list, todo_properties, read_description, interactive):
     """
     Create a new task with SUMMARY.
     """
@@ -410,7 +410,7 @@ def new(ctx, summary, list, todo_properties, read_description, interactive):
 @_interactive_option
 @with_id_arg
 @catch_errors
-def edit(ctx, id, todo_properties, interactive, raw):
+def ed(ctx, id, todo_properties, interactive, raw):
     """
     Edit the task with id ID.
     """
@@ -443,7 +443,7 @@ def edit(ctx, id, todo_properties, interactive, raw):
 @pass_ctx
 @with_id_arg
 @catch_errors
-def show(ctx, id):
+def sh(ctx, id):
     """
     Show details about a task.
     """
@@ -479,7 +479,7 @@ def done(ctx, todos):
     callback=_validate_todos,
 )
 @catch_errors
-def cancel(ctx, todos):
+def cc(ctx, todos):
     """Cancel one or more tasks."""
     for todo in todos:
         todo.cancel()
@@ -505,7 +505,7 @@ def flush(ctx):
 @click.argument("ids", nargs=-1, required=True, type=click.IntRange(0))
 @click.option("--yes", is_flag=True, default=False)
 @catch_errors
-def delete(ctx, ids, yes):
+def rm(ctx, ids, yes):
     """
     Delete tasks.
 
@@ -535,7 +535,7 @@ def delete(ctx, ids, yes):
 )
 @click.argument("ids", nargs=-1, required=True, type=click.IntRange(0))
 @catch_errors
-def copy(ctx, list, ids):
+def cp(ctx, list, ids):
     """Copy tasks to another list."""
 
     for id in ids:
@@ -553,7 +553,7 @@ def copy(ctx, list, ids):
 )
 @click.argument("ids", nargs=-1, required=True, type=click.IntRange(0))
 @catch_errors
-def move(ctx, list, ids):
+def mv(ctx, list, ids):
     """Move tasks to another list."""
 
     for id in ids:
@@ -632,7 +632,7 @@ def move(ctx, list, ids):
     ),
 )
 @catch_errors
-def list(ctx, *args, **kwargs):
+def ls(ctx, *args, **kwargs):
     """
     List tasks (default). Filters any completed or cancelled tasks by default.
 

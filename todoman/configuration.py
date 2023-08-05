@@ -138,10 +138,10 @@ must use the ``--list`` / ``-l`` option every time you add a todo.
     ConfigEntry(
         "default_due",
         int,
-        24,
+        0,
         """
 The default difference (in hours) between new todo’s due date and creation
-date. If not specified, the value is 24. If set to 0, the due date for new
+date. If not specified, the value is 0. If set to 0, the due date for new
 todos will not be set.
 """,
         None,
@@ -174,7 +174,7 @@ partially-complete) are also included.
     ConfigEntry(
         "default_command",
         str,
-        "list",
+        "ls",
         """
 When running ``todo`` with no commands, run this command.
 """,

@@ -65,6 +65,8 @@ class DefaultFormatter:
         # TODO: format lines fuidly and drop the table
         # it can end up being more readable when too many columns are empty.
         # show dates that are in the future in yellow (in 24hs) or grey (future)
+        GREEN = '\033[92m'
+        RESET = '\033[0m'
         table = []
         for todo in todos:
             completed = "X" if todo.is_completed else " "
@@ -103,7 +105,7 @@ class DefaultFormatter:
             # split into parts to satisfy linter line too long
             table.append(
                 f"[{completed}] {todo.id} {priority} {due} "
-                f"{recurring}{summary}{categories}"
+                f"{recurring}{GREEN}{summary}{RESET}{categories}"
             )
 
         return "\n".join(table)
