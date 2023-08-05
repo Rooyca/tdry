@@ -7,7 +7,7 @@ Todoman
 
 ## Changes
 
-### Shorter Commands
+### 1. Shorter Commands
 
 ```
 cancel: cc
@@ -22,12 +22,12 @@ new: nw
 show: sh
 ```
 
-### Add more color to the output.
-### The default `due` date is now `newer` (0).
+### 2. Add more color to the output.
+### 3. The default `due` date is now `never` (0).
 
 ---
 
-#### Bonus
+## Bonus
 
 I have created an alias to make the commands even shorter.
 

@@ -491,7 +491,7 @@ def cc(ctx, todos):
 @pass_ctx
 @click.confirmation_option(prompt="Are you sure you want to delete all done tasks?")
 @catch_errors
-def flush(ctx):
+def fl(ctx):
     """
     Delete done tasks. This will also clear the cache to reset task IDs.
     """
