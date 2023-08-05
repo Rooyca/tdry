@@ -461,7 +461,7 @@ def sh(ctx, id):
     callback=_validate_todos,
 )
 @catch_errors
-def done(ctx, todos):
+def do(ctx, todos):
     """Mark one or more tasks as done."""
     for todo in todos:
         todo.complete()
