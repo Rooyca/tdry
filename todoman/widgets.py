@@ -173,9 +173,15 @@ class PercentSelector(urwid.Button):
 
     RANGES = [
         [0],
-        [90, 80, 70, 60],
+        [10], 
+        [20],
+        [30],
+        [40],
         [50],
-        [10, 20, 30, 40],
+        [60],
+        [70],
+        [80],
+        [90],
     ]
 
     def __init__(self, parent, percent, formatter_function):
@@ -201,10 +207,10 @@ class PercentSelector(urwid.Button):
 
     def keypress(self, size, key):
         if key in ["right", "enter"]:
-            self._update_label(-1)
+            self._update_label(1)
             return
         if key == "left":
-            self._update_label(1)
+            self._update_label(-1)
             return
 
         return super().keypress(size, key)

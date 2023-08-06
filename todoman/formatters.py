@@ -203,23 +203,45 @@ class DefaultFormatter:
             return None
         if percent == "10%":
             return 10
+        elif percent == "20%":
+            return 20
         elif percent == "30%":
             return 30
+        elif percent == "40%":
+            return 40
         elif percent == "50%":
             return 50
+        elif percent == "60%":
+            return 60
+        elif percent == "70%":
+            return 70
+        elif percent == "80%":
+            return 80
         elif percent == "90%":
-            return 100
+            return 90
         else:
             raise ValueError("Priority has to be one of 5%, 30%, 50%, or 100%")
 
     def format_percent(self, percent: Optional[int]) -> str:
         if not percent:
             return "0%"
-        elif 70 <= percent <= 100:
+        elif percent == 90:
             return "90%"
+        elif percent == 80:
+            return "80%"
+        elif percent == 70:
+            return "70%"
+        elif percent == 60:
+            return "60%"
         elif percent == 50:
             return "50%"
-        elif 10 <= percent <= 40:
+        elif percent == 40:
+            return "40%"
+        elif percent == 30:
+            return "30%"
+        elif percent == 20:
+            return "20%"
+        elif percent == 10:
             return "10%"
 
         raise ValueError("percent is an invalid value")
@@ -227,11 +249,23 @@ class DefaultFormatter:
     def format_percent_compact(self, percent: Optional[int]) -> str:
         if not percent:
             return ""
-        elif 100 <= percent <= 70:
+        elif percent == 90:
             return "90%"
+        elif percent == 80:
+            return "80%"
+        elif percent == 70:
+            return "70%"
+        elif percent == 60:
+            return "60%"
         elif percent == 50:
             return "50%"
-        elif 10 <= percent <= 40:
+        elif percent == 40:
+            return "40%"
+        elif percent == 30:
+            return "30%"
+        elif percent == 20:
+            return "20%"
+        elif percent == 10:
             return "10%"
 
         raise ValueError("percent is an invalid value")
