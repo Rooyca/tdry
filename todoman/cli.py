@@ -2,7 +2,7 @@ import contextlib
 import functools
 import glob
 import locale
-import sys
+import sys, os, shutil
 from contextlib import contextmanager
 from datetime import datetime
 from datetime import timedelta
@@ -273,15 +273,69 @@ _interactive_option = click.option(
     envvar="TODOMAN_CONFIG",
     metavar="PATH",
 )
+@click.option(
+    "--newlist",
+    "-nl",
+    default=None,
+    help="Make a new list with the given name.",
+    metavar="TEXT",
+)
+@click.option(
+    "--removelist",
+    "-rml",
+    default=None,
+    help="Delete list with the given name.",
+    metavar="TEXT",
+)
+@click.option(
+    "--lists",
+    "-sl",
+    default=None,
+    is_flag=True,
+    help="Show all lists",
+)
 @click.pass_context
 @click.version_option(prog_name="todoman")
 @catch_errors
-def cli(click_ctx, colour, porcelain, humanize, config):
+def cli(click_ctx, colour, porcelain, humanize, config, newlist, removelist, lists):
     ctx = click_ctx.ensure_object(AppContext)
     try:
         ctx.config = load_config(config)
     except ConfigurationError as e:
         raise click.ClickException(e.args[0]) from None
+
+    _path = ctx.config["path"][:-1]
+
+    try:
+        if lists:
+            print("Your lists are:")
+            for dir in os.listdir(_path):
+                print("- "+str(dir))
+            return
+    except:
+        pass
+
+    try:
+        if newlist:
+            os.mkdir(_path +newlist)
+            print("= List "+newlist+" created =")
+            return
+    except:
+        pass
+
+    try:
+        if removelist:
+            try:
+                if click.confirm('Are you sure you want to delete list "'+removelist+'" ?'):
+                    shutil.rmtree(_path +removelist)
+                    print("= List "+removelist+" deleted =")
+                    return
+            except:
+                print("= List "+removelist+" does not exist =")
+    except:
+        pass
+
+    del _path
 
     if porcelain and humanize:
         raise click.ClickException(
