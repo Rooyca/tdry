@@ -164,3 +164,51 @@ class PrioritySelector(urwid.Button):
     @property
     def priority(self):
         return self._priority
+
+class PercentSelector(urwid.Button):
+    HELP = [
+        ("left", "Lower Porcentage"),
+        ("right", "Higher Porcentage"),
+    ]
+
+    RANGES = [
+        [0],
+        [90, 80, 70, 60],
+        [50],
+        [10, 20, 30, 40],
+    ]
+
+    def __init__(self, parent, percent, formatter_function):
+        self._parent = parent
+        self._label = urwid.SelectableIcon("", 0)
+        urwid.WidgetWrap.__init__(self, self._label)
+
+        self._percent = percent
+        self._formatter = formatter_function
+        self._set_label()
+
+    def _set_label(self):
+        self.set_label(self._formatter(self._percent))
+
+    def _update_label(self, delta=0):
+        for i, r in enumerate(PercentSelector.RANGES):
+            if self._percent in r:
+                self._percent = PercentSelector.RANGES[
+                    (i + delta) % len(PercentSelector.RANGES)
+                ][0]
+                self._set_label()
+                return
+
+    def keypress(self, size, key):
+        if key in ["right", "enter"]:
+            self._update_label(-1)
+            return
+        if key == "left":
+            self._update_label(1)
+            return
+
+        return super().keypress(size, key)
+
+    @property
+    def percent(self):
+        return self._percent

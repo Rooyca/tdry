@@ -39,6 +39,7 @@ class TodoEditor:
             ("Due", self._due),
             ("Completed", self._completed),
             ("Priority", self._priority),
+            ("Percent", self._percent),
         ]:
             label = urwid.Text(label + ":", align="right")
             column = urwid.Columns([(13, label), field], dividechars=1)
@@ -88,6 +89,11 @@ class TodoEditor:
             priority=self.todo.priority,
             formatter_function=self.formatter.format_priority,
         )
+        self._percent = widgets.PercentSelector(
+            parent=self,
+            percent=self.todo.percent_complete,
+            formatter_function=self.formatter.format_percent,
+        )
 
     def _init_list_selector(self):
         self.list_selector = []
@@ -112,6 +118,8 @@ class TodoEditor:
             + "\n".join(f" {k}: {v}" for k, v in widgets.ExtendedEdit.HELP)
             + "\n\nIn Priority Selector:\n"
             + "\n".join(f" {k}: {v}" for k, v in widgets.PrioritySelector.HELP)
+            + "\n\nIn Percent Selector:\n"
+            + "\n".join(f" {k}: {v}" for k, v in widgets.PercentSelector.HELP)
         )
 
     def _change_current_list(self, radio_button, new_state, new_list):
@@ -164,6 +172,7 @@ class TodoEditor:
             self.todo.completed_at = None
         self.todo.categories = [c.strip() for c in self.categories.split(",")]
         self.todo.priority = self.priority
+        self.todo.percent_complete = self.percent
 
         # TODO: categories
         # TODO: comment
@@ -205,3 +214,7 @@ class TodoEditor:
     @property
     def priority(self):
         return self._priority.priority
+
+    @property
+    def percent(self):
+        return self._percent.percent
