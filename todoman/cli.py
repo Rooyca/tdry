@@ -1,7 +1,7 @@
 import contextlib
 import functools
 import glob
-import locale
+#import locale
 import sys, os, shutil
 from contextlib import contextmanager
 from datetime import datetime
@@ -308,9 +308,14 @@ def cli(click_ctx, colour, porcelain, humanize, config, newlist, removelist, lis
 
     try:
         if lists:
-            print("Your lists are:")
+            print("="*11+" LISTS "+"="*11)
+            print ("= "+" "*25+" =")
             for dir in os.listdir(_path):
-                print("- "+str(dir))
+                print("= 📁 "+str(dir)+" "*int(22-len(dir))+" =")
+            print ("= "+" "*25+" =")
+            print("="*29+"\n")
+            print("To show tasks from a list use: ")
+            print('\033[90m'+"> todo ls LIST\n")
             return
     except:
         pass
@@ -318,22 +323,21 @@ def cli(click_ctx, colour, porcelain, humanize, config, newlist, removelist, lis
     try:
         if newlist:
             os.mkdir(_path +newlist)
-            print("= List "+newlist+" created =")
-            return
+            print()
+            print("== List "+newlist+" created ==\n")
     except:
-        pass
+        print()
+        print("== List "+newlist+" already exists ==\n")
 
     try:
         if removelist:
-            try:
-                if click.confirm('Are you sure you want to delete list "'+removelist+'" ?'):
-                    shutil.rmtree(_path +removelist)
-                    print("= List "+removelist+" deleted =")
-                    return
-            except:
-                print("= List "+removelist+" does not exist =")
+            print()
+            if click.confirm('[ ☠️ ] Are you sure you want to delete list "'+removelist+'" ?'):
+                shutil.rmtree(_path +removelist)
+                print()
+                print("== List "+removelist+" deleted ==\n")
     except:
-        pass
+        print("== List "+removelist+" does not exist ==")
 
     del _path
 
@@ -369,7 +373,10 @@ def cli(click_ctx, colour, porcelain, humanize, config, newlist, removelist, lis
     ctx.db = Database(paths, ctx.config["cache_path"])
 
     # Make python actually use LC_TIME, or the user's locale settings
-    locale.setlocale(locale.LC_TIME, "")
+    #
+    # I commented this out because it was causing issues with locales on arch
+    #
+    #locale.setlocale(locale.LC_TIME, "")
 
     if not click_ctx.invoked_subcommand:
         invoke_command(

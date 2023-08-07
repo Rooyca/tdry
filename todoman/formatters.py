@@ -17,6 +17,15 @@ from dateutil.tz import tzlocal
 from todoman.model import Todo
 from todoman.model import TodoList
 
+RED = '\033[91m'
+GREEN = '\033[92m'
+YELLOW = '\033[93m'
+BLUE = '\033[94m'
+MAGENTA = '\033[95m'
+CYAN = '\033[96m'
+RESET = '\033[0m'
+GRAY = '\033[90m'
+WHITE = '\033[97m'
 
 def rgb_to_ansi(colour: Optional[str]) -> Optional[str]:
     """
@@ -65,11 +74,9 @@ class DefaultFormatter:
         # TODO: format lines fuidly and drop the table
         # it can end up being more readable when too many columns are empty.
         # show dates that are in the future in yellow (in 24hs) or grey (future)
-        GREEN = '\033[92m'
-        RESET = '\033[0m'
         table = []
         for todo in todos:
-            completed = "X" if todo.is_completed else " "
+            completed = f"{GREEN}✔ {RESET}" if todo.is_completed else f"{RED}❌{RESET}"
             percent = todo.percent_complete or ""
             if percent:
                 percent = f" ({percent}%)"
@@ -104,7 +111,7 @@ class DefaultFormatter:
             # FIXME: double space when no priority
             # split into parts to satisfy linter line too long
             table.append(
-                f"[{completed}] {todo.id} {priority} {due} "
+                f"{completed} {todo.id} {priority} {due} "
                 f"{recurring}{GREEN}{summary}{RESET}{categories}"
             )
 
