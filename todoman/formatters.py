@@ -70,6 +70,19 @@ class DefaultFormatter:
     def compact(self, todo: Todo) -> str:
         return self.compact_multiple([todo])
 
+    def select_format(self, todo: Todo) -> str:
+        return self.select_c([todo])
+
+    def select_c(self, todos: Iterable[Todo], hide_list=False) -> str:
+        table = []
+        for todo in todos:
+            summary = f"{todo.summary}"
+            table.append(
+                f"{summary}"
+            )
+
+        return "".join(table)
+
     def compact_multiple(self, todos: Iterable[Todo], hide_list=False) -> str:
         # TODO: format lines fuidly and drop the table
         # it can end up being more readable when too many columns are empty.

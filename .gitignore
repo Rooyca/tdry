@@ -14,5 +14,8 @@ docs/_build/
 .hypothesis
 *.tmp
 .venv
+.feature*
+db.*
+test_*
 
 todoman/version.py

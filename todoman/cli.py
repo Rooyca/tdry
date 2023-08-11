@@ -21,8 +21,22 @@ from todoman.model import Database
 from todoman.model import Todo
 from todoman.model import cached_property
 
+from tinydb import TinyDB, Query
+from tinydb.operations import set as tdb_set
+
+db = TinyDB('/home/rooyca/.config/todoman/db.json')
+
 click_log.basic_config()
 
+RED = '\033[91m'
+GREEN = '\033[92m'
+YELLOW = '\033[93m'
+BLUE = '\033[94m'
+MAGENTA = '\033[95m'
+CYAN = '\033[96m'
+RESET = '\033[0m'
+GRAY = '\033[90m'
+WHITE = '\033[97m'
 
 @contextmanager
 def handle_error():
@@ -206,6 +220,7 @@ class AppContext:
         self.config = None
         self.db = None
         self.formatter_class = None
+        self.task_id = None
 
     @cached_property
     def ui_formatter(self):
@@ -719,3 +734,114 @@ def ls(ctx, *args, **kwargs):
 
     todos = ctx.db.todos(**kwargs)
     click.echo(ctx.formatter.compact_multiple(todos, hide_list))
+
+
+@cli.command()
+@pass_ctx
+@click.argument("task_id", nargs=-1, required=False, type=click.IntRange(0))
+@click.option(
+    "--all",
+    "-a",
+    default=None,
+    is_flag=True,
+    help="Show all todos that are being done.",
+)
+@catch_errors
+def doing(ctx, **kwargs):
+    """Show the task that is being done now."""
+    try:
+        if kwargs["task_id"][0] is not None:
+            r = ctx.db.todo(kwargs["task_id"][0])
+            t = ctx.formatter.select_format(r)
+            click.echo(t)
+            doing = db.table("doing")
+            doing.insert({'task_id': kwargs["task_id"][0],
+                          'start_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                          'summary': t,
+                          'end_time': None,
+                          })
+            return
+    except IndexError:
+        pass
+
+    doing = db.table("doing")
+    tasks = doing.all()
+    if kwargs["all"]:
+        color_print = GRAY        
+        max_leng = 0
+        for t in tasks:
+            if max_leng < len(t["summary"]):
+                max_leng = len(t["summary"])
+
+        for i, task in enumerate(tasks):
+            space = ""
+            if i == len(tasks) - 1:
+                color_print = GREEN
+            if int(task.get('task_id')) <= 9:
+                space = " "
+            click.echo(color_print+
+                       str(task.get('task_id'))+
+                       space+
+                       "|| "+
+                       task.get('summary')+
+                       " "*int(max_leng-len(task.get('summary')))+
+                       "  >> "+
+                       f"({task.get('start_time')})"
+                       )
+        return
+    try:
+        task = tasks[-1]
+        click.echo(str(task.get('task_id'))+". "+GREEN+task.get('summary')+WHITE+" >> "+f"{CYAN}({task.get('start_time')})")
+    except IndexError:
+        click.echo("No task is being done now, please use 'todo doing ID' to start a task.")
+
+@cli.command()
+@pass_ctx
+@click.option(
+    "--clear",
+    "-c",
+    default=None,
+    is_flag=True,
+    help="Clear all todos that has been done.",
+)
+@catch_errors
+def done(ctx, *args, **kwargs):
+    """Mark a task as done."""
+    if kwargs["clear"]:
+        done = db.table("done")
+        done.truncate()
+        return
+    done = db.table("done")
+
+    try:
+        doing = db.table("doing")
+        Task = Query()
+        doing.update(tdb_set('end_time', datetime.now().strftime("%Y-%m-%d %H:%M:%S")), Task.task_id == doing.all()[-1]['task_id'])
+        done.insert({'task_id': doing.all()[-1]['task_id'],
+                     'start_time': doing.all()[-1]['start_time'],
+                     'summary': doing.all()[-1]['summary'],
+                     'end_time': doing.all()[-1]['end_time']})
+        doing.remove(Task.task_id == doing.all()[-1]['task_id'])
+    except IndexError:
+        click.echo("There are not tasks being done now.")
+        click.echo("-"*35)
+
+    all_done = done.all()
+    for i, task in enumerate(all_done):
+        start_time = task.get('start_time').split(" ")[1].split(":")
+        start_time = int(start_time[0])*60+int(start_time[1])
+        end_time = task.get('end_time').split(" ")[1].split(":")
+        end_time = int(end_time[0])*60+int(end_time[1])
+        total_time = end_time - start_time
+        click.echo(f"{i+1}. {GREEN}{task.get('summary')}{WHITE} >> {task.get('start_time')} ({total_time} min)")
+
+@cli.command()
+@pass_ctx
+@catch_errors
+def cancel(ctx):
+    """Cancel a task that is being done."""
+    doing = db.table("doing")
+    try:
+        doing.remove(doc_ids=[doing.all()[-1]['task_id']])
+    except IndexError:
+        click.echo("There are not tasks being done now.")
