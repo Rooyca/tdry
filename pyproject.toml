@@ -33,6 +33,7 @@ dependencies = [
     "python-dateutil",
     "pyxdg",
     "urwid",
+    "tinydb>=4.8.0",
 ]
 dynamic = ["version"]
 
