@@ -753,8 +753,13 @@ def doing(ctx, **kwargs):
         if kwargs["task_id"][0] is not None:
             r = ctx.db.todo(kwargs["task_id"][0])
             t = ctx.formatter.select_format(r)
-            click.echo(t)
+            click.echo(" >> "+t)
             doing = db.table("doing")
+            Task = Query()
+
+            if doing.search(Task.task_id == kwargs["task_id"][0]):
+                return
+
             doing.insert({'task_id': kwargs["task_id"][0],
                           'start_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                           'summary': t,
@@ -798,6 +803,13 @@ def doing(ctx, **kwargs):
 @cli.command()
 @pass_ctx
 @click.option(
+    "--show",
+    "-s",
+    default=None,
+    is_flag=True,
+    help="Show all todos that has been done.",
+)
+@click.option(
     "--clear",
     "-c",
     default=None,
@@ -813,18 +825,19 @@ def done(ctx, *args, **kwargs):
         return
     done = db.table("done")
 
-    try:
-        doing = db.table("doing")
-        Task = Query()
-        doing.update(tdb_set('end_time', datetime.now().strftime("%Y-%m-%d %H:%M:%S")), Task.task_id == doing.all()[-1]['task_id'])
-        done.insert({'task_id': doing.all()[-1]['task_id'],
-                     'start_time': doing.all()[-1]['start_time'],
-                     'summary': doing.all()[-1]['summary'],
-                     'end_time': doing.all()[-1]['end_time']})
-        doing.remove(Task.task_id == doing.all()[-1]['task_id'])
-    except IndexError:
-        click.echo("There are not tasks being done now.")
-        click.echo("-"*35)
+    if not kwargs["show"]:
+        try:
+            doing = db.table("doing")
+            Task = Query()
+            doing.update(tdb_set('end_time', datetime.now().strftime("%Y-%m-%d %H:%M:%S")), Task.task_id == doing.all()[-1]['task_id'])
+            done.insert({'task_id': doing.all()[-1]['task_id'],
+                         'start_time': doing.all()[-1]['start_time'],
+                         'summary': doing.all()[-1]['summary'],
+                         'end_time': doing.all()[-1]['end_time']})
+            doing.remove(Task.task_id == doing.all()[-1]['task_id'])
+        except IndexError:
+            click.echo("There are not tasks being done now.")
+            click.echo("-"*35)
 
     all_done = done.all()
     for i, task in enumerate(all_done):
