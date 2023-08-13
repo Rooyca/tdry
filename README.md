@@ -53,3 +53,7 @@ I have created an alias to make the commands even shorter.
 ```
 alias t='todo'
 ```
+
+## TODO
+
+- [ ] Create a Docker image to run the application.
