@@ -31,6 +31,19 @@ show: sh
 - `--removelist` or `-rml` to delete a list.
 - `--lists` or `-sl` to show all lists.
 
+#### 6. Add `doing` command to focus on a especific task.
+
+- `doing` alone shows the current task.
+- `doing <task>` add the task to the doing list.
+- `doing --all` or `doing -a` shows all tasks in the doing list.
+
+#### 7. Add `done` command to mark as complete the task that is currently being done.
+
+- `done` alone marks the current task as complete.
+- `done --show` or `done -s` shows all completed tasks.
+- `done --clear` or `done -c` clears all completed tasks.
+
+#### 8. Add `cancel` command to cancel the task that is currently being done.
 ---
 
 ## Bonus
