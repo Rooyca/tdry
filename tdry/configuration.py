@@ -10,7 +10,7 @@ from typing import NamedTuple
 
 import xdg.BaseDirectory
 
-from todoman import __documentation__
+from tdry import __documentation__
 
 
 def expand_path(path: str) -> str:
@@ -78,7 +78,7 @@ files) will be treated as a list.""",
         str,
         "auto",
         """
-By default todoman will disable colored output if stdout is not a TTY (value
+By default tdry will disable colored output if stdout is not a TTY (value
 ``auto``). Set to ``never`` to disable colored output entirely, or ``always``
 to enable it regardless. This can be overridden with the ``--color`` option.
 """,
@@ -149,7 +149,7 @@ todos will not be set.
     ConfigEntry(
         "cache_path",
         str,
-        "$XDG_CACHE_HOME/todoman/cache.sqlite3",
+        "$XDG_CACHE_HOME/tdry/cache.sqlite3",
         """
 The location of the cache file (an sqlite database). This file is used to
 store todo data and speed up execution/startup, and also contains the IDs for
@@ -206,7 +206,7 @@ class ConfigurationError(Exception):
 def find_config(config_path=None):
     if not config_path:
         for d in xdg.BaseDirectory.xdg_config_dirs:
-            path = join(d, "todoman", "config.py")
+            path = join(d, "tdry", "config.py")
             if exists(path):
                 config_path = path
                 break

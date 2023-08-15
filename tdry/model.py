@@ -20,7 +20,7 @@ from atomicwrites import AtomicWriter
 from dateutil.rrule import rrulestr
 from dateutil.tz import tzlocal
 
-from todoman import exceptions
+from tdry import exceptions
 
 logger = logging.getLogger(name=__name__)
 
@@ -382,7 +382,7 @@ class VtodoWriter:
         c.add_component(vtodo)
 
         with AtomicWriter(path, "wb").open() as f:
-            c.add("prodid", "io.barrera.todoman")
+            c.add("prodid", "io.barrera.tdry")
             c.add("version", "2.0")
             f.write(c.to_ical())
 

@@ -1,6 +1,6 @@
 import urwid
 
-from todoman import widgets
+from tdry import widgets
 
 _palette = [("error", "light red", "")]
 

@@ -14,8 +14,8 @@ import parsedatetime
 import pytz
 from dateutil.tz import tzlocal
 
-from todoman.model import Todo
-from todoman.model import TodoList
+from tdry.model import Todo
+from tdry.model import TodoList
 
 RED = '\033[91m'
 GREEN = '\033[92m'

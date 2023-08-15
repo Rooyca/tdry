@@ -7,7 +7,7 @@ releases, in reverse chronological order.
 v4.3.0
 ------
 
-* Add support for Python 3.11. Todoman already worked with Python 3.11, but is
+* Add support for Python 3.11. tdry already worked with Python 3.11, but is
   now tested with this Python version in CI and has the relevant classifiers.
 * Improved zsh shell completion.
 * Dropped ``setup.py`` in favour of ``pyproject.toml``.
@@ -75,7 +75,7 @@ Key differences:
 
 That's basically it. This lets up drop the problematic dependency, and we don't
 actually need anything to read the config: it's just python code like the rest
-of `todoman`!
+of `tdry`!
 
 For those users who _are_ python developers, you'll note this gives some
 interesting flexibility: you CAN add any custom python code into the config

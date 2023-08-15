@@ -12,19 +12,19 @@ from typing import Tuple
 import click
 import click_log
 
-from todoman import exceptions
-from todoman import formatters
-from todoman.configuration import ConfigurationError
-from todoman.configuration import load_config
-from todoman.interactive import TodoEditor
-from todoman.model import Database
-from todoman.model import Todo
-from todoman.model import cached_property
+from tdry import exceptions
+from tdry import formatters
+from tdry.configuration import ConfigurationError
+from tdry.configuration import load_config
+from tdry.interactive import TodoEditor
+from tdry.model import Database
+from tdry.model import Todo
+from tdry.model import cached_property
 
 from tinydb import TinyDB, Query
 from tinydb.operations import set as tdb_set
 
-db = TinyDB('/home/rooyca/.config/todoman/db.json')
+db = TinyDB('/home/rooyca/.config/tdry/db.json')
 
 click_log.basic_config()
 
@@ -42,7 +42,7 @@ WHITE = '\033[97m'
 def handle_error():
     try:
         yield
-    except exceptions.TodomanError as e:
+    except exceptions.tdryError as e:
         click.echo(e)
         sys.exit(e.EXIT_CODE)
 
@@ -259,7 +259,7 @@ _interactive_option = click.option(
     default=None,
     type=click.Choice(["always", "auto", "never"]),
     help=(
-        "By default todoman will disable colored output if stdout "
+        "By default tdry will disable colored output if stdout "
         "is not a TTY (value `auto`). Set to `never` to disable "
         "colored output entirely, or `always` to enable it "
         "regardless."
@@ -285,7 +285,7 @@ _interactive_option = click.option(
     "-c",
     default=None,
     help="The config file to use.",
-    envvar="TODOMAN_CONFIG",
+    envvar="tdry_CONFIG",
     metavar="PATH",
 )
 @click.option(
@@ -310,7 +310,7 @@ _interactive_option = click.option(
     help="Show all lists",
 )
 @click.pass_context
-@click.version_option(prog_name="todoman")
+@click.version_option(prog_name="tdry")
 @catch_errors
 def cli(click_ctx, colour, porcelain, humanize, config, newlist, removelist, lists):
     ctx = click_ctx.ensure_object(AppContext)
@@ -649,7 +649,7 @@ def mv(ctx, list, ids):
         "Sort tasks using fields like : "
         '"start", "due", "priority", "created_at", "percent_complete" etc.'
         "\nFor all fields please refer to: "
-        "<https://todoman.readthedocs.io/en/stable/usage.html> "
+        "<https://tdry.readthedocs.io/en/stable/usage.html> "
     ),
     callback=_sort_callback,
 )

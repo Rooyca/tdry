@@ -1,5 +1,4 @@
-#!/usr/bin/env python
 from tdry.cli import cli
 
 if __name__ == "__main__":
-    cli()
+    cli(auto_envvar_prefix="tdry")

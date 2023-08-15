@@ -1,7 +1,12 @@
-Todoman
+tdry
 =======
 
-> [README Original](README.original.rst)
+This repo was forked from the original repo at https://github.com/pimutils/todoman
+
+---
+
+
+> [Original README](README.original.rst)
 
 ---
 
