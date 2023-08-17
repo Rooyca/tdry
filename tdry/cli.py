@@ -167,6 +167,20 @@ def validate_status(ctx=None, param=None, val=None) -> str:
 
     return val
 
+"""
+BEGGIN:
+       Functions by: rooyca
+"""
+
+def time_spend(start_time, end_time):    
+    start_time = int(start_time[0])*60+int(start_time[1])
+    end_time = int(end_time[0])*60+int(end_time[1])
+    return end_time - start_time
+
+"""
+END
+"""
+
 
 def _todo_property_options(command):
     click.option(
@@ -763,6 +777,8 @@ def doing(ctx, **kwargs):
             doing.insert({'task_id': kwargs["task_id"][0],
                           'start_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                           'summary': t,
+                          'time_spent': 0,
+                          'resume_at': None,
                           'end_time': None,
                           })
             return
@@ -829,11 +845,30 @@ def done(ctx, *args, **kwargs):
         try:
             doing = db.table("doing")
             Task = Query()
-            doing.update(tdb_set('end_time', datetime.now().strftime("%Y-%m-%d %H:%M:%S")), Task.task_id == doing.all()[-1]['task_id'])
+            doing.update(tdb_set('end_time', datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 
+                                                Task.task_id == doing.all()[-1]['task_id'])
+
+            now = datetime.now().strftime("%H:%M:%S").split(":")
+
+            try:
+                time_s_resume = time_spend(doing.all()[-1]['resume_at'].split(" ")[1].split(":"), now)
+                time_s = time_s_resume
+            except:
+                time_s = time_spend(doing.all()[-1]['start_time'].split(" ")[1].split(":"), now)
+
+            try:
+                time_s_before = int(doing.all()[-1]['time_spent'])
+                time_s = time_s_before + time_s
+            except:
+                pass
+
+            doing.update(tdb_set('time_spent', time_s), Task.task_id == doing.all()[-1]['task_id'])
             done.insert({'task_id': doing.all()[-1]['task_id'],
                          'start_time': doing.all()[-1]['start_time'],
                          'summary': doing.all()[-1]['summary'],
-                         'end_time': doing.all()[-1]['end_time']})
+                         'time_spent': doing.all()[-1]['time_spent'],
+                         'resume_at': doing.all()[-1]['resume_at'],
+                         'end_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
             doing.remove(Task.task_id == doing.all()[-1]['task_id'])
         except IndexError:
             click.echo("There are not tasks being done now.")
@@ -841,12 +876,7 @@ def done(ctx, *args, **kwargs):
 
     all_done = done.all()
     for i, task in enumerate(all_done):
-        start_time = task.get('start_time').split(" ")[1].split(":")
-        start_time = int(start_time[0])*60+int(start_time[1])
-        end_time = task.get('end_time').split(" ")[1].split(":")
-        end_time = int(end_time[0])*60+int(end_time[1])
-        total_time = end_time - start_time
-        click.echo(f"{i+1}. {GREEN}{task.get('summary')}{WHITE} >> {task.get('start_time')} ({total_time} min)")
+        click.echo(f"{i+1}. {GREEN}{task.get('summary')}{WHITE} >> {task.get('start_time')} ({task.get('time_spent')} min)")
 
 @cli.command()
 @pass_ctx
@@ -858,3 +888,36 @@ def cancel(ctx):
         doing.remove(doc_ids=[doing.all()[-1]['task_id']])
     except IndexError:
         click.echo("There are not tasks being done now.")
+
+@cli.command()
+@pass_ctx
+@catch_errors
+def pause(ctx):
+    """Pause a task that is being done."""
+    pause = db.table("pause")
+    try:
+        doing = db.table("doing")
+        Task = Query()
+        doing.update(tdb_set('time_spent', 
+                    time_spend(doing.all()[-1]['start_time'].split(" ")[1].split(":"),
+                    datetime.now().strftime("%H:%M:%S").split(":"))),
+                    Task.task_id == doing.all()[-1]['task_id'])
+        pause.insert({'task_id': doing.all()[-1]['task_id']})
+    except IndexError:
+        click.echo("There are not tasks being done now.")
+
+@cli.command()
+@pass_ctx
+@catch_errors
+def resume(ctx):
+    """Proceed doing a task that has been paused."""
+    pause = db.table("pause")
+    doing = db.table("doing")
+    Task = Query()
+    try:
+        doing.update(tdb_set('resume_at', datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                                          Task.task_id == doing.all()[-1]['task_id'])
+        pause.truncate()
+    except IndexError:
+        click.echo("There are not tasks being done now.")
+
