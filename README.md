@@ -49,6 +49,10 @@ show: sh
 - `done --clear` or `done -c` clears all completed tasks.
 
 #### 8. Add `cancel` command to cancel the task that is currently being done.
+
+#### 9. Add `pause` command to pause the task that is currently being done.
+
+#### 10. Add `resume` command to resume the task that is currently paused.
 ---
 
 ## Bonus
