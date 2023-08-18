@@ -1,16 +1,11 @@
 tdry
 =======
 
-This repo was forked from the original repo at https://github.com/pimutils/todoman
+This repo was forked from: https://github.com/pimutils/todoman
 
 ---
 
-
-> [Original README](README.original.rst)
-
----
-
-## Changes
+## Changes made by **rooyca**
 
 #### 1. Shorter Commands
 

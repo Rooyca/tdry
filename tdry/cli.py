@@ -28,15 +28,7 @@ db = TinyDB(os.path.expanduser("~")+"/.config/tdry/db.json")
 
 click_log.basic_config()
 
-RED = '\033[91m'
-GREEN = '\033[92m'
-YELLOW = '\033[93m'
-BLUE = '\033[94m'
-MAGENTA = '\033[95m'
-CYAN = '\033[96m'
-RESET = '\033[0m'
-GRAY = '\033[90m'
-WHITE = '\033[97m'
+from tdry.colors import *
 
 @contextmanager
 def handle_error():
@@ -841,7 +833,10 @@ def done(ctx, *args, **kwargs):
     done = db.table("done")
 
     if kwargs["clear"]:
-        done.truncate()
+        if click.confirm('[ ☠️ ] Are you sure you want to delete all done tasks?'):
+            done.truncate()
+            click.echo("-"*35)
+            click.echo("All done tasks were deleted.")
         return    
 
     if not kwargs["show"]:
@@ -854,7 +849,7 @@ def done(ctx, *args, **kwargs):
                 click.echo("="*(23+int(len(str(doing.all()[-1]['task_id'])))))
                 doing.remove(Task.task_id == doing.all()[-1]['task_id'])
                 return
-                
+
             doing.update(tdb_set('end_time', datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 
                                                 Task.task_id == doing.all()[-1]['task_id'])
 
