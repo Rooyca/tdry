@@ -24,7 +24,7 @@ from tdry.model import cached_property
 from tinydb import TinyDB, Query
 from tinydb.operations import set as tdb_set
 
-db = TinyDB('/home/rooyca/.config/tdry/db.json')
+db = TinyDB(os.path.expanduser("~")+"/.config/tdry/db.json")
 
 click_log.basic_config()
 
@@ -46,7 +46,6 @@ def handle_error():
         click.echo(e)
         sys.exit(e.EXIT_CODE)
 
-
 def catch_errors(f):
     @functools.wraps(f)
     def wrapper(*a, **kw):
@@ -55,10 +54,8 @@ def catch_errors(f):
 
     return wrapper
 
-
 TODO_ID_MIN = 1
 with_id_arg = click.argument("id", type=click.IntRange(min=TODO_ID_MIN))
-
 
 def _validate_lists_param(ctx, param=None, lists=()):
     return [_validate_list_param(ctx, name=list_) for list_ in lists]
@@ -168,8 +165,7 @@ def validate_status(ctx=None, param=None, val=None) -> str:
     return val
 
 """
-BEGGIN:
-       Functions by: rooyca
+BEGGIN:: rooyca
 """
 
 def time_spend(start_time, end_time):    
@@ -180,7 +176,6 @@ def time_spend(start_time, end_time):
 """
 END
 """
-
 
 def _todo_property_options(command):
     click.option(
@@ -749,6 +744,9 @@ def ls(ctx, *args, **kwargs):
     todos = ctx.db.todos(**kwargs)
     click.echo(ctx.formatter.compact_multiple(todos, hide_list))
 
+"""
+IN THE BENIGIN:: rooyca
+"""
 
 @cli.command()
 @pass_ctx
@@ -765,11 +763,16 @@ def doing(ctx, **kwargs):
     """Show the task that is being done now."""
     try:
         if kwargs["task_id"][0] is not None:
+            Task = Query()
+            if db.table('done').search(Task.task_id == kwargs["task_id"][0]):
+                click.echo("="*(23+int(len(str(kwargs["task_id"][0])))))
+                click.echo("== Task ID "+str(kwargs["task_id"][0])+" is done. ==")
+                click.echo("="*(23+int(len(str(kwargs["task_id"][0])))))
+                return
             r = ctx.db.todo(kwargs["task_id"][0])
             t = ctx.formatter.select_format(r)
             click.echo(" >> "+t)
-            doing = db.table("doing")
-            Task = Query()
+            doing = db.table("doing") 
 
             if doing.search(Task.task_id == kwargs["task_id"][0]):
                 return
@@ -835,16 +838,23 @@ def doing(ctx, **kwargs):
 @catch_errors
 def done(ctx, *args, **kwargs):
     """Mark a task as done."""
-    if kwargs["clear"]:
-        done = db.table("done")
-        done.truncate()
-        return
     done = db.table("done")
+
+    if kwargs["clear"]:
+        done.truncate()
+        return    
 
     if not kwargs["show"]:
         try:
             doing = db.table("doing")
             Task = Query()
+            if done.search(Task.task_id == doing.all()[-1]['task_id']):
+                click.echo("="*(23+int(len(str(doing.all()[-1]['task_id'])))))
+                click.echo("== Task ID "+str(doing.all()[-1]['task_id'])+" is done. ==")
+                click.echo("="*(23+int(len(str(doing.all()[-1]['task_id'])))))
+                doing.remove(Task.task_id == doing.all()[-1]['task_id'])
+                return
+                
             doing.update(tdb_set('end_time', datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 
                                                 Task.task_id == doing.all()[-1]['task_id'])
 
@@ -921,3 +931,7 @@ def resume(ctx):
     except IndexError:
         click.echo("There are not tasks being done now.")
 
+
+"""
+END:: rooyca
+"""
