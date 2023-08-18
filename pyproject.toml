@@ -3,9 +3,9 @@ name = "tdry"
 authors = [
     {name = "rooyca", email = "rooyca@gmail.com"},
 ]
-description = "My own version of a simple icalendar-based todo manager."
+description = "For people who like to plan their life, easy to use icalendar-based todo manager. Forked from todoman."
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 # keywords = ["TODO"]
 license = {text = "ISC"}
 classifiers = [
@@ -14,7 +14,6 @@ classifiers = [
     "Environment :: Console :: Curses",
     "License :: OSI Approved :: ISC License (ISCL)",
     "Operating System :: POSIX",
-    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
